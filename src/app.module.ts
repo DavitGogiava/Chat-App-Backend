@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { User, UserSchema } from './schemas/user.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ChatModule } from './chat/chat.module';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ChatModule } from './chat/chat.module';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     AuthModule,
     ChatModule,
+    FileModule,
   ],
 })
 export class AppModule {}
