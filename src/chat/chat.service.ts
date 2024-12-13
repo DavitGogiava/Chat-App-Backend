@@ -26,4 +26,12 @@ export class ChatService {
       .populate('participants', 'username')
       .exec();
   }
+
+  async getChatDetails(chatId: string): Promise<Chat> {
+    return this.chatModel
+      .findById(chatId)
+      .populate('participants', 'username')
+      .populate('messages.sender', 'username')
+      .exec();
+  }
 }
