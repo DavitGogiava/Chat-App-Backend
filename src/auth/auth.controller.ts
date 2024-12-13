@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Put,
   Request,
   Body,
   UseGuards,
@@ -11,6 +12,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { User } from '../schemas/user.schema';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -31,5 +33,14 @@ export class AuthController {
   @Get('me')
   async getProfile(@Request() req): Promise<{ username: string }> {
     return this.authService.getUserProfile(req.user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('me')
+  async updateProfile(
+    @Request() req,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.authService.updateUserProfile(req.user.userId, updateUserDto);
   }
 }

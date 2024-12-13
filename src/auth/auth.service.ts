@@ -7,6 +7,7 @@ import { RegisterUserDto } from './dto/register-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import * as bcrypt from 'bcrypt';
 import { UserProfileDto } from './dto/user-profile.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -63,5 +64,26 @@ export class AuthService {
       throw new Error('User not found');
     }
     return { username: user.username };
+  }
+
+  async updateUserProfile(
+    userId: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (updateUserDto.username) {
+      user.username = updateUserDto.username;
+    }
+
+    if (updateUserDto.password) {
+      const salt = await bcrypt.genSalt();
+      user.password = await bcrypt.hash(updateUserDto.password, salt);
+    }
+
+    return user.save();
   }
 }
