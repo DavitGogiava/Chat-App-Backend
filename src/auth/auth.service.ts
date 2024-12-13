@@ -4,6 +4,10 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import { RegisterUserDto } from './dto/register-user.dto';
 import * as bcrypt from 'bcrypt';
+import {
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
@@ -12,13 +16,22 @@ export class AuthService {
     const { username, password } = registerUserDto;
     const existingUser = await this.userModel.findOne({ username }).exec();
     if (existingUser) {
-      throw new Error('User already exists');
+      throw new ConflictException('User already exists');
     }
 
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password, salt);
+    let hashedPassword;
+    try {
+      const salt = await bcrypt.genSalt(10);
+      hashedPassword = await bcrypt.hash(password, salt);
+    } catch {
+      throw new InternalServerErrorException('Error hashing password');
+    }
 
     const newUser = new this.userModel({ username, password: hashedPassword });
-    return newUser.save();
+    try {
+      return await newUser.save();
+    } catch {
+      throw new InternalServerErrorException('Error creating user');
+    }
   }
 }
