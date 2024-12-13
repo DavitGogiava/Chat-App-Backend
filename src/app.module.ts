@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { User, UserSchema } from './schemas/user.schema';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     MongooseModule.forRoot('mongodb://localhost/chat-app'),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     AuthModule,
+    ChatModule,
   ],
 })
 export class AppModule {}
