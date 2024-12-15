@@ -18,14 +18,16 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() registerUserDto: RegisterUserDto): Promise<User> {
+  async register(
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<{ message: string; data?: { access_token: string } }> {
     return this.authService.register(registerUserDto);
   }
 
   @Post('login')
   async login(
     @Body() loginUserDto: LoginUserDto,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ message: string; data?: { access_token: string } }> {
     return this.authService.login(loginUserDto);
   }
 
